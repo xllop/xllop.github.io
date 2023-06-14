@@ -36,6 +36,25 @@
     
     
     <entry>
+      <title>JVM学习</title>
+      <link href="/2023/06/13/JVM/"/>
+      <url>/2023/06/13/JVM/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 学习 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2023/06/13/hello-world/"/>
       <url>/2023/06/13/hello-world/</url>
@@ -63,6 +82,17 @@
     
     
     <entry>
+      <title>categories</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>movies</title>
       <link href="/movies/index.html"/>
       <url>/movies/index.html</url>
@@ -74,9 +104,9 @@
     
     
     <entry>
-      <title>categories</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>tags</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
