@@ -40,7 +40,7 @@
       <link href="/2023/06/13/JVM/"/>
       <url>/2023/06/13/JVM/</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<h1 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h1><h3 id="判断对象死亡的两种方法"><a href="#判断对象死亡的两种方法" class="headerlink" title="判断对象死亡的两种方法"></a>判断对象死亡的两种方法</h3><p>1.引用计数法<br>2.可达性分析法</p>]]></content>
       
       
       
