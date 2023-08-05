@@ -1,7 +1,9 @@
 .footer {
-    background-color: transparent;
-  }
+  background-color: transparent;
+}
+
+.footer p {
+  opacity: 0.6;
+}
+
   
-  .footer p {
-    opacity: 0.6;
-  }
