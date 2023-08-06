@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Redis学习 | xllop-blog</title><meta name="author" content="xllop"><meta name="copyright" content="xllop"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="Redisredis的重要特性：持久化redis的持久化指的是redis会把内存中的数据写入到硬盘中，在redis重新启动的时候加载这些数据，从而最大限度的降低缓存丢失带来的影响。 主要持久化的方式：  RDB（Redis DataBase）：Redis默认的持久化方式。把当前数据快照保存在硬盘上   按照一定的时间将内存的数据以快照的形式保存到硬盘上，对应产生的数据文件为dump.rdb。是指用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习">
+<meta property="og:url" content="https://xllop.github.io/2023/04/14/redis/index.html">
+<meta property="og:site_name" content="xllop-blog">
+<meta property="og:description" content="Redisredis的重要特性：持久化redis的持久化指的是redis会把内存中的数据写入到硬盘中，在redis重新启动的时候加载这些数据，从而最大限度的降低缓存丢失带来的影响。 主要持久化的方式：  RDB（Redis DataBase）：Redis默认的持久化方式。把当前数据快照保存在硬盘上   按照一定的时间将内存的数据以快照的形式保存到硬盘上，对应产生的数据文件为dump.rdb。是指用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.postimg.cc/k4NYj1jL/6.jpg">
+<meta property="article:published_time" content="2023-04-14T08:18:22.000Z">
+<meta property="article:modified_time" content="2023-08-05T02:20:03.967Z">
+<meta property="article:author" content="xllop">
+<meta property="article:tag" content="Java学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.postimg.cc/k4NYj1jL/6.jpg"><link rel="shortcut icon" href="https://i.postimg.cc/zvdc8KzH/mmexport1691202612852.jpg"><link rel="canonical" href="https://xllop.github.io/2023/04/14/redis/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-05 10:20:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/source/css/universe.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/zvdc8KzH/mmexport1691202612852.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.postimg.cc/k4NYj1jL/6.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="xllop-blog"><span class="site-name">xllop-blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Redis学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-14T08:18:22.000Z" title="发表于 2023-04-14 16:18:22">2023-04-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-05T02:20:03.967Z" title="更新于 2023-08-05 10:20:03">2023-08-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="redis的重要特性：持久化"><a href="#redis的重要特性：持久化" class="headerlink" title="redis的重要特性：持久化"></a>redis的重要特性：持久化</h2><p>redis的持久化指的是redis会把内存中的数据写入到硬盘中，在redis重新启动的时候加载这些数据，从而最大限度的降低缓存丢失带来的影响。</p>
+<p>主要持久化的方式：</p>
+<ol>
+<li>RDB（Redis DataBase）：Redis默认的持久化方式。把当前数据快照保存在硬盘上</li>
+</ol>
+<ul>
+<li><p>按照一定的时间将内存的数据以快照的形式保存到硬盘上，对应产生的数据文件为dump.rdb。是指用数据集快照的方式（半持久化模式）记录<code>redis</code>数据库的所有键值对，在某个时间点将数据写入一个临时文件，持久化结束后，用这个临时文件替换上次持久化的文件，达到数据恢复。</p>
+</li>
+<li><p>优点：</p>
+<ul>
+<li>只有一个dump.rdb，方便持久化；</li>
+<li>容灾性好，一个文件可以保存到安全的磁盘；</li>
+<li>性能最大化，保证了Redis的高效性；</li>
+<li>相对于数据集大时，比 AOF 的启动效率更高；</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>数据安全性低；</li>
+<li>RDB 是间隔一段时间进行持久化，如果在持久化时Redis发生故障，会发生数据丢失。所以这种方式更适合数据要求不严谨的时候；</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>AOF（Append Only File）：是将Redis执行的每次写命令记录到单独的日志文件中，当重启Redis会重新将持久化的日志中文件恢复数据。当两种方式同时开启时数据恢复Redis会优先选择AOF恢复</li>
+</ol>
+<ul>
+<li><p>优点：</p>
+<ul>
+<li>数据安全，AOF持久化可以配置appendfsync属性，有always属性，每进行一次命令操作就会记录到AOF文件中一次；</li>
+<li>通过append模式写文件，即使中途服务器宕机，可以通过redis-check-aof工具解决数据一致性问题；</li>
+<li>AOF机制的rewrite模式。AOF文件没被 rewrite 之前（文件过大时会对命令 进行合并重写），可以删除其中的某些命令（比如误操作的 flushall）；</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>AOF文件比RDB文件大，且恢复速度慢；</li>
+<li>数据集大的时候，比RDB启动效率低；</li>
+</ul>
+</li>
+<li><p>RDB和AOF的对比：</p>
+<ul>
+<li>AOF文件比RDB更新频率高，优先使用AOF还原数据；</li>
+<li>AOF比RDB更安全也更大；</li>
+<li>RDB性能比AOF好；</li>
+<li>如果两个都配了优先加载AOF；</li>
+</ul>
+</li>
+</ul>
+<h2 id="Redis三种模式"><a href="#Redis三种模式" class="headerlink" title="Redis三种模式"></a>Redis三种模式</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44363920/article/details/125564514?ops_request_misc=&request_id=&biz_id=102&utm_term=redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%8C%E9%9B%86%E7%BE%A4&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-125564514.142%5Ev91%5Econtrol,239%5Ev12%5Econtrol&spm=1018.2226.3001.4187">CSDN详解</a></p>
+<ul>
+<li><p>主从复制：主从复制是高可用Redis的基础，哨兵和群集都是在主从复制基础上实现高可用的。</p>
+<p>主从复制实现主要实现了数据的多机备份，以及对于读操作的负载均衡和简单故障恢复。（将一台 Redis 服务器的数据，复制到其他的 Redis 服务器。前者称为主节点(Master)，后者称为从节点(Slave)；数据的复制是单向的，只能由主节点到从节点。</p>
+<ul>
+<li><p>优势：</p>
+<ul>
+<li><p>数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式、</p>
+</li>
+<li><p>故障恢复：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复；</p>
+</li>
+<li><p>负载均衡：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务。</p>
+</li>
+<li><p>高可用基石：除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础。</p>
+</li>
+</ul>
+</li>
+<li><p>缺陷：故障恢复无法自动化，写操作无法负载均衡，存储能力受到单机的限制。</p>
+</li>
+</ul>
+</li>
+<li><p>哨兵：在主从复制的基础上，哨兵实现了自动化的故障恢复。（当服务器宕机后，需要手动一台从机切换为主机，这需要人工干预，不仅费时费力，而且还会造成一段时间内服务不可用。为了解决主从复制的缺点，就有了哨兵模式）</p>
+<p>缺陷：写操作无法负载均衡，存储能力受到单机的限制，哨兵无法对从节点进行自动故障转移；在读写分离场景下，从节点故障会导致读服务不可用，需要对从节点做额外的监控、切换操作。</p>
+</li>
+<li><p>集群：通过集群，Redis解决了写操作无法负载均衡，以及存储能力受到单机限制的问题，实现了较为完善的高可用方案。（集群中的节点分为<strong>主节点和从节点</strong>；只有主节点负责读写请求和集群信息的维护；从节点只进行主节点数据和状态信息的复制。）</p>
+</li>
+</ul>
+<h2 id="Redis的五种数据类型"><a href="#Redis的五种数据类型" class="headerlink" title="Redis的五种数据类型"></a>Redis的五种数据类型</h2><p><code>string</code>（字符串）、<code>hash</code>（哈希）、<code>list</code>（列表）、<code>set</code>（集合）及<code>zset</code>（<code>sorted set </code>有序集合）</p>
+<ul>
+<li>String：<ul>
+<li>特点：<ul>
+<li>字符串类型是redis,最基础的数据结构，而且其他几种结构都是在字符串类型基础上构建的，所以字符串类型能为其他四种数据结构的学习奠定基础。</li>
+<li>字符串类型实际上可以使字符串（简单的字符串、复杂的字符串（xml、json）、数字（整数、浮点数）、二进制（图片、音场、视频））</li>
+<li>最大不能超过512M</li>
+</ul>
+</li>
+<li>应用场景：<ul>
+<li>缓存功能：字符串最经典的使用场景，<code>redis</code>作为缓存层，<code>Mysql</code>作为存储层，绝大部分请求数据都是redis中获取，由于<code>redis</code>具有支撑高并发特性，所以缓存通常能起到加速读写和降低后端压力的作用。</li>
+<li>计数器：许多运用都会使用<code>redis</code>,作为计数的基础工具,他可以实现快速计数、查询缓存的功能，同时数据可以一步落地到其他的数据源。如:视频播放数系统就是使用<code>redis</code>作为视频播放数计数的基础组件（文章点击量，视频浏览量）。</li>
+<li>共享<code>session</code>： 出于负载均衡的考虑，分布式服务会将用户信息的访问均衡到不同服务器上，用户刷新一次访问可能会需要重新登录，为避免这个问题可以用redis.将用户session集中管理，在这种模式下只要保证redis.的高可用和扩展性的，每次获取用户更新或查询登录信息都直接从redis.中集中获取。</li>
+<li>限速：处于安全考虑，每次进行登录时让用户输入手机验证码，为了短信接口不被频繁访问，会限制用户每分钟获取验证码的频率</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>hash</code>（哈希）类似java里面的<code>Map&lt;String,Object&gt;</code><ul>
+<li>特点<ul>
+<li>在<code>redis</code>中哈希类型是指value本身又是一种键值对结构</li>
+</ul>
+</li>
+<li>应用场景<ul>
+<li>哈希结构相对于字符串序列化缓存信息更加直观，并且在更新操作上更加便捷，所以常常用于用户信息等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>list</code>（列表）<ul>
+<li>特点：<ul>
+<li>列表类型是用来存储多个有序地字符串，列表中的每个字符串成为元素（<code>element</code>）,一个列表最多可以存储（2^32）-1个元素，在<code>redis</code>中，可以从列表两端插入（<code>push</code>）和弹出（<code>pop</code>)，还可以获取指定范围的元素列表、获取指定索引下标的元素等，列表是一种比较灵活的数据结构，它可以充当栈和队列的角色，在实际开发中有很多应用场景。</li>
+</ul>
+</li>
+<li>优点：<ul>
+<li>列表的元素是有序的，这就意味着可以通过索引下标获取某个或某个范围内的元素列表。</li>
+<li>列表内的元素是可以重复的。</li>
+</ul>
+</li>
+<li>应用场景<ul>
+<li>消息队列：<code>redis</code>的<code>lpush</code>和<code>brpop</code>命令组合即可实现阻塞式消息队列，生产者客户端是用<code>Ipush</code>从列表左侧插入元素，多个消费者客户端使用<code>brpop</code>命令阻塞时的“抢”列表尾部的元素，多个客户端保证了消费的负载均衡和高可用性。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>set</code>（集合）<ul>
+<li>特点<ul>
+<li>集合类型也是用来保存多个字符串元素，但和列表不同的是集合中不允许有重复的元素，并且集合中的元素是无序的，不能通过索引下标获取元素，<code>redis</code>除了支持集合内的增删改查，同时还支持多个集合取交集、并集、差集。</li>
+</ul>
+</li>
+<li>应用场景：<ul>
+<li>集合类型比较典型的使用场景，如一个用户对娱乐、体育比较感兴趣，另一个可能对新闻感兴趣，这些兴趣就是标签，有了这些数据就可以得到同一标签的人，以及用户的共同爱好的标签，这些数据对于用户体验以及增强用户粘度比较重要。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>zset</code>(sorted set：有序集合)<ul>
+<li>特点<ul>
+<li>有序集合和集合有着必然的联系，他保留了集合不能有重复成员的特性，但不同的是，有序集合中的元素是可以排序的，但是它和列表的使用索引下标作为排序依据不同的是，它给每个元素设置一个分数，作为排序的依据。（有序集合中的元素不可以重复，但是score 可以重复，就和一个班里的同学学号不能重复，但考试成绩可以相同)。</li>
+</ul>
+</li>
+<li>应用场景<ul>
+<li>排行榜：有序集合经典使用场景。例如视频网站需要对用户上传的视频做排行榜，榜单维护可能是多方面:按照时间、按照播放量、按照获得的赞数等。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据类型底层"><a href="#数据类型底层" class="headerlink" title="数据类型底层"></a>数据类型底层</h2><p>针对五种数据类型，Redis在底层都是使用redisobject对象表示的，**<code>redisObject</code>有三个重要属性：<code>type</code>、<code>encoding</code>、<code>ptr</code>**；其中<code>type</code>表示value的数据类型，<code>encoding</code>表示value的编码，即底层使用了哪种数据结构；<code>ptr</code>是一个指向保存value的底层数据结构的指针。</p>
+<p><a target="_blank" rel="noopener" href="https://postimg.cc/fS9yL8J0">数据类型<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/wMWmwPzF/image.webp" alt="image.webp"></a></p>
+<p><a target="_blank" rel="noopener" href="https://postimg.cc/py3r5MQh">具体编码<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/RVZH8MNR/2.webp" alt="2.webp"></a></p>
+<ol>
+<li><p>String类型：</p>
+<ul>
+<li>String对象的encoding有三种：<code>INT</code>、<code>EMBSTR</code>、<code>RAW</code><ul>
+<li>如果value保存的是一个整数值，并且这个整数值可以用Long类型表示，那么value使用的是encoding就是<code>INT</code>，并将ptr的值直接设置为value值（Long ptr &#x3D; 123）；</li>
+<li>如果value保存的是一个字符串，当字符串的长度小于等于44字节时，value使用的encoding是<code>EMBSTR</code></li>
+<li>当字符串长度大于44字节时，value使用的encoding是<code>RAW</code>（44字节的界限是Redis3.2之后的最新界限，3.2版本之前是39字节）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>List</p>
+<ul>
+<li>在Redis3.2之前<ul>
+<li>当list列表中每个字符串的长度都小于64字节并且list列表中元素数量小于512时，List对象使用<code>ZIPLIST</code>（压缩列表）编码</li>
+<li>其余使用<code>LINKEDLIST</code>（双向链表）编码</li>
+</ul>
+</li>
+<li>在Redis之后使用<code>QUICKLIST</code>（快速列表）：QUICKLIST结合了ZIPLIST和LINKEDLIST的优点，它是一个以压缩列表（ZIPLIST）为节点的双向链表（LINKEDLIST）</li>
+</ul>
+</li>
+<li><p>SET</p>
+<ul>
+<li>SET有两种编码：<code>INTSET</code>和<code>HASHTABLE</code><ul>
+<li>当集合中保存的所有元素都是整数，并且元素个数不超过512时，Set对象使用<code>INTSET</code>编码</li>
+<li>其他情况统一使用<code>HASHTABLE</code>编码</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ZSet</p>
+<ul>
+<li>ZSet有两种编码：<code>SKIPLIST</code>（跳表）和<code>ZIPLIST</code><ul>
+<li>ZIPLIST（如果有序集合的元素个数小于 128 个，并且每个元素的值小于 64 字节时）</li>
+<li>跳表（类似于省市区的划分，可以快速查找）：「多层」的有序链表</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Hash</p>
+<ul>
+<li>Hash有两种编码：<code>HASHTABLE</code>和<code>ZIPLIST</code><ul>
+<li>ZIPLIST（当Hash对象中保存的属性的数量小于512个，并且所有键值对的长度都小于64字 节时）</li>
+<li>哈希表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h4><p>每一个数据类型都有独立的命令来进行操作，很多情况下我们需要一次执行不止一个命令，而且需要其同时成功或者失败。redis对事务的支持也是源自于这部分需求，即支持一次性按顺序执行多个命令的能力，并保证其原子性。</p>
+<h4 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h4><p>在事务的基础上，如果我们需要在服务端一次性的执行更复杂的操作（包含一些逻辑判断），则lua就可以排上用场了（比如在获取某一个缓存的时候，同时延长其过期时间）。redis保证lua脚本的原子性，一定的场景下，是可以代替redis提供的事务相关的命令的。</p>
+<h4 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h4><p>因为redis的客户端和服务器的连接时基于TCP的， 默认每次连接都时只能执行一个命令。管道则是允许利用一次连接来处理多条命令，从而可以节省一些tcp连接的开销。管道和事务的差异在于管道是为了节省通信的开销，但是并不会保证原子性。                           </p>
+<h4 id="Redis是单线程模型，指的是执行Redis命令的核心模块是单线程的，而不是整个Redis实例就一个线程。"><a href="#Redis是单线程模型，指的是执行Redis命令的核心模块是单线程的，而不是整个Redis实例就一个线程。" class="headerlink" title="Redis是单线程模型，指的是执行Redis命令的核心模块是单线程的，而不是整个Redis实例就一个线程。"></a>Redis是单线程模型，指的是执行Redis命令的核心模块是单线程的，而不是整个Redis实例就一个线程。</h4><h4 id="Redis集群模式"><a href="#Redis集群模式" class="headerlink" title="Redis集群模式"></a>Redis集群模式</h4><p>单个Redis在实际应用中可能会崩溃，因此要用到集群。</p>
+<h4 id="缓存雪崩、缓存击穿、缓存穿透"><a href="#缓存雪崩、缓存击穿、缓存穿透" class="headerlink" title="缓存雪崩、缓存击穿、缓存穿透"></a>缓存雪崩、缓存击穿、缓存穿透</h4><p><a target="_blank" rel="noopener" href="https://postimg.cc/YvGV1MmS"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/Njpcv0sR/3.jpg" alt="3.jpg"></a></p>
+<p>缓存雪崩和缓存击穿主要原因是数据不在缓存中，而导致大量的请求访问数据库，数据库压力骤增，容易引发一系列连锁反应，导致系统崩溃。当数据被重新加载回缓存，应用又可以从缓存快速读取数据，不再继续访问数据库，数据库的压力也会瞬间降下来。</p>
+<h2 id="Redis的6种淘汰机制"><a href="#Redis的6种淘汰机制" class="headerlink" title="Redis的6种淘汰机制"></a>Redis的6种淘汰机制</h2><ol>
+<li>noeviction（默认策略）：对于写请求不再提供服务，直接返回错误（DEL请求和部分特殊请求除外）</li>
+<li>allkeys-lru：从所有key中使用LRU算法进行淘汰（LRU算法：最近最少使用算法）</li>
+<li>volatile-lru：从设置了过期时间的key中使用LRU算法进行淘汰</li>
+<li>allkeys-random：从所有key中随机淘汰数据</li>
+<li>volatile-random：从设置了过期时间的key中随机淘汰</li>
+<li>volatile-ttl：在设置了过期时间的key中，淘汰过期时间剩余最短的</li>
+</ol>
+<h4 id="如何获取及设置内存淘汰策略"><a href="#如何获取及设置内存淘汰策略" class="headerlink" title="如何获取及设置内存淘汰策略"></a>如何获取及设置内存淘汰策略</h4><ol>
+<li><p>获取当前内存淘汰策略：<code>config get maxmemory-policy</code></p>
+</li>
+<li><p>获取Redis能使用的最大内存大小：<code>config get maxmemory</code></p>
+</li>
+<li><p>设置淘汰策略：</p>
+<ul>
+<li>通过配置文件设置淘汰策略（修改redis.conf文件）：<code>maxmemory-policy</code></li>
+<li>通过命令修改淘汰策略：<code>config set maxmemory-policy allkeys-lru</code></li>
+</ul>
+</li>
+<li><p>设置Redis最大占用内存大小：<code>config set maxmemory 100mb</code></p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://xllop.github.io">xllop</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://xllop.github.io/2023/04/14/redis/">https://xllop.github.io/2023/04/14/redis/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://xllop.github.io" target="_blank">xllop-blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java%E5%AD%A6%E4%B9%A0/">Java学习</a></div><div class="post_share"><div class="social-share" data-image="https://i.postimg.cc/k4NYj1jL/6.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/06/20/%E9%9D%A2%E8%AF%95/" title="明朝八股"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img2.baidu.com/it/u=2951102358,151621292&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=889" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">明朝八股</div></div></a></div><div class="next-post pull-right"><a href="/2023/03/14/JVM/" title="JVM学习"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/k4NYj1jL/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">JVM学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/03/14/JVM/" title="JVM学习"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/k4NYj1jL/6.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-14</div><div class="title">JVM学习</div></div></a></div><div><a href="/2021/12/19/%E7%BD%91%E7%BB%9C/" title="网络学习"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img2.baidu.com/it/u=675709540,2873712418&fm=253&fmt=auto&app=138&f=JPEG?w=751&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-19</div><div class="title">网络学习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/zvdc8KzH/mmexport1691202612852.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">xllop</div><div class="author-info__description">百丈之台，其始则一石耳，由是而二石焉，由是而三石，四石以至于千万石焉。——学习亦然。——今日记一事，明日悟一理，积久而成学。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xllop"><i class="fab fa-github"></i><span>/..跟我来</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xllop" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/ldb_778@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">一直在进步</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis"><span class="toc-text">Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#redis%E7%9A%84%E9%87%8D%E8%A6%81%E7%89%B9%E6%80%A7%EF%BC%9A%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-text">redis的重要特性：持久化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-text">Redis三种模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E7%9A%84%E4%BA%94%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">Redis的五种数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%BA%95%E5%B1%82"><span class="toc-text">数据类型底层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-text">事务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Lua%E8%84%9A%E6%9C%AC"><span class="toc-text">Lua脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%A1%E9%81%93"><span class="toc-text">管道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%EF%BC%8C%E6%8C%87%E7%9A%84%E6%98%AF%E6%89%A7%E8%A1%8CRedis%E5%91%BD%E4%BB%A4%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E7%9A%84%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E6%95%B4%E4%B8%AARedis%E5%AE%9E%E4%BE%8B%E5%B0%B1%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E3%80%82"><span class="toc-text">Redis是单线程模型，指的是执行Redis命令的核心模块是单线程的，而不是整个Redis实例就一个线程。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="toc-text">Redis集群模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E3%80%81%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E3%80%81%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F"><span class="toc-text">缓存雪崩、缓存击穿、缓存穿透</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E7%9A%846%E7%A7%8D%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6"><span class="toc-text">Redis的6种淘汰机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E5%8F%8A%E8%AE%BE%E7%BD%AE%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-text">如何获取及设置内存淘汰策略</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/07/05/%E8%84%91%E6%AD%BB%E4%BA%A1%E8%AE%B0%E5%BD%95/" title="有关项目学习"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/KvWf5hGR/OIP.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="有关项目学习"/></a><div class="content"><a class="title" href="/2023/07/05/%E8%84%91%E6%AD%BB%E4%BA%A1%E8%AE%B0%E5%BD%95/" title="有关项目学习">有关项目学习</a><time datetime="2023-07-05T07:18:22.000Z" title="发表于 2023-07-05 15:18:22">2023-07-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/20/%E9%9D%A2%E8%AF%95/" title="明朝八股"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img2.baidu.com/it/u=2951102358,151621292&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=889" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="明朝八股"/></a><div class="content"><a class="title" href="/2023/06/20/%E9%9D%A2%E8%AF%95/" title="明朝八股">明朝八股</a><time datetime="2023-06-20T06:42:00.000Z" title="发表于 2023-06-20 14:42:00">2023-06-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/14/redis/" title="Redis学习"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/k4NYj1jL/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis学习"/></a><div class="content"><a class="title" href="/2023/04/14/redis/" title="Redis学习">Redis学习</a><time datetime="2023-04-14T08:18:22.000Z" title="发表于 2023-04-14 16:18:22">2023-04-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/14/JVM/" title="JVM学习"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/k4NYj1jL/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JVM学习"/></a><div class="content"><a class="title" href="/2023/03/14/JVM/" title="JVM学习">JVM学习</a><time datetime="2023-03-14T08:18:22.000Z" title="发表于 2023-03-14 16:18:22">2023-03-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/21/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" title="多线程学习"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.postimg.cc/KvWf5hGR/OIP.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多线程学习"/></a><div class="content"><a class="title" href="/2022/12/21/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" title="多线程学习">多线程学习</a><time datetime="2022-12-21T01:18:22.000Z" title="发表于 2022-12-21 09:18:22">2022-12-21</time></div></div></div></div></div></div></main><footer id="footer"></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><canvas id="universe"></canvas><script defer src="/source/js/universe.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
